@@ -1,0 +1,12 @@
+#board{
+	display: flex;
+	flex-wrap: wrap;
+	position: relative;
+}
+
+#board .tile{
+	/* width: 10px;
+	height: 10px;
+	border:  1px solid black; */
+
+}

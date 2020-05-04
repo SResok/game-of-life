@@ -620,3 +620,8 @@ pre tt:after {
     font-size: 100%;
   }
 }
+
+footer{
+  margin-top: 15px;
+  text-align: center;
+}
