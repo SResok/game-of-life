@@ -8,6 +8,7 @@ export default class Board extends Component {
     this.state = {
       tiles: [],
       coordinates: [],
+      hovering: [],
       config: {
         rowSize: 9,
         columnSize: 16,
@@ -20,28 +21,17 @@ export default class Board extends Component {
     this.handleMouseDown = this.handleMouseDown.bind(this)
   }
 
-  setCoordinate(x, y) {
-    this.x = x;
-    this.y = y;
-  }
-
   generateTiles(rowSize, columnSize, tileSize) {
-
     const tiles = []
-    const coordinates = []
-  
-    for (let y = 0; y < columnSize; y++) {
-      for (let x = 0; x < rowSize; x++) {
 
-        coordinates.push({x,y})
+    for (let x = 0; x < rowSize; x++) {
+      for (let y = 0; y < columnSize; y++) {
         if (typeof tiles[x] == "undefined") {
           tiles[x] = []
         }
         tiles[x][y] = { life: 0, hover: 0 }
       }
     }
-    console.log(tiles)
-    console.log(coordinates)
     return tiles
   }
 
@@ -64,8 +54,6 @@ export default class Board extends Component {
   }
 
   toggleLife(tileX, tileY) {
-    console.log(tileX, tileY)
-
     this.setState(prevState => {
       const tiles = prevState.tiles
 
@@ -77,24 +65,34 @@ export default class Board extends Component {
 
   getNeighbors(tileX, tileY) {
     const neighbors = []
-    for (let y = tileY - 1; y <= tileY + 1; y++) {
-      for (let x = tileX - 1; x <= tileX + 1; x++) {
-        if (!(tileX == x && tileY == y)) {
-          if (typeof neighbors[x] == "undefined") {
-            neighbors[x] = []
+
+    const {rowSize,columnSize} = this.state.config
+
+    for (let x = tileX - 1; x <= tileX + 1; x++) {
+      for (let y = tileY - 1; y <= tileY + 1; y++) {
+        if (x >= 0 && x < rowSize) {
+          if (y >= 0 && y < columnSize) {
+            if (!(tileX == x && tileY == y)) {
+                if (typeof neighbors[x] == "undefined") {
+                  neighbors[x] = []
+                }
+                neighbors[x][y] = 0
+            }
           }
-          neighbors[x][y] = 0
         }
       }
     }
-    //console.log(this.getNeighbors)
     return neighbors
   }
 
+  setHover(aTiles) {
+    this.setState({
+      hovering: aTiles
+    })
+  }
+
   handleMouseEnter(tileX, tileY) {
-    // console.clear()
-    //console.log(this.getNeighbors(tileX,tileY))
-    // console.log(test)
+    this.setHover(this.getNeighbors(tileX, tileY));
   }
   handleMouseDown(tileX, tileY) {
     this.toggleLife(tileX, tileY)
@@ -105,13 +103,8 @@ export default class Board extends Component {
   }
   render() {
     const tileSize = parseInt(this.state.config.tileSize)
+    const currentHovering = this.state.hovering;
 
-    const arr = new Array();
-    arr.push(new this.setCoordinate(10, 0));
-    arr.push(new this.setCoordinate(20, 5));
-
-
-    console.log(arr)
     return (
       <div>
         {Object.entries(this.state.config).map(([key, value]) => (
@@ -129,15 +122,23 @@ export default class Board extends Component {
         ))}
         <button onClick={this.setTiles}>REGEN</button>
         <div id="board">
-          {this.state.tiles.map((tile, tileY) => {
-            const renderedTiles = tile.map((life, tileX) => {
+          {this.state.tiles.map((tile, tileX) => {
+            const renderedTiles = tile.map((life, tileY) => {
+              let background = life.life ? "black" : "white"
+
+              if (currentHovering[tileX] && currentHovering[tileX][tileY] == 0) {
+                
+                background = "red"
+              }
+              
+              // const background = life.hover ? "red" : life.life ? "black" : "white"
               const style = {
                 position: "absolute",
                 width: tileSize,
                 height: tileSize,
                 border: "1px solid black",
-                transform: `translate3d(${tileX * 100}%,${tileY * 100}%,0)`,
-                background: life.life ? "black" : "white",
+                transform: `translate3d(${tileY * 100}%,${tileX * 100}%,0)`,
+                background: background,
               }
               const tileKey = `${tileX}_${tileY}`
               return (
@@ -150,9 +151,7 @@ export default class Board extends Component {
                   onMouseDown={() => this.handleMouseDown(tileX, tileY)}
                   onMouseEnter={() => this.handleMouseEnter(tileX, tileY)}
                 >
-                  <b>
-                    {tileX} {tileY}
-                  </b>
+                
                 </div>
               )
             })
