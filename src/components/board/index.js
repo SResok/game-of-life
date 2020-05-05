@@ -7,6 +7,7 @@ export default class Board extends Component {
 
     this.state = {
       tiles: [],
+      coordinates: [],
       config: {
         rowSize: 9,
         columnSize: 16,
@@ -19,20 +20,28 @@ export default class Board extends Component {
     this.handleMouseDown = this.handleMouseDown.bind(this)
   }
 
+  setCoordinate(x, y) {
+    this.x = x;
+    this.y = y;
+  }
+
   generateTiles(rowSize, columnSize, tileSize) {
-    // for (let i = 0; i < rowSize; i++) {
-    // 	for (let j = 0; i < columnSize; j++){
+
     const tiles = []
     const coordinates = []
-
+  
     for (let y = 0; y < columnSize; y++) {
       for (let x = 0; x < rowSize; x++) {
+
+        coordinates.push({x,y})
         if (typeof tiles[x] == "undefined") {
           tiles[x] = []
         }
-        tiles[x][y] = {life:0,hover:0}
+        tiles[x][y] = { life: 0, hover: 0 }
       }
     }
+    console.log(tiles)
+    console.log(coordinates)
     return tiles
   }
 
@@ -54,54 +63,41 @@ export default class Board extends Component {
     })
   }
 
-  toggleLife(tile) {
+  toggleLife(tileX, tileY) {
+    console.log(tileX, tileY)
+
     this.setState(prevState => {
       const tiles = prevState.tiles
 
-      tiles[tile].life = !tiles[tile].life
+      tiles[tileX][tileY].life = !tiles[tileX][tileY].life
 
       return tiles
     })
   }
-  handleMouseEnter(tileX, tileY) {
-    console.clear()
-    const test = []
-    for (let i = tileX - 1; i <= tileX + 1; i++){
-      for (let j = tileY - 1; j <= tileY + 1; j++){
-        if (!i == tileX && j == tileY) {
 
-          console.log(i,j)
-          // test.push(i+" "+j)
+  getNeighbors(tileX, tileY) {
+    const neighbors = []
+    for (let y = tileY - 1; y <= tileY + 1; y++) {
+      for (let x = tileX - 1; x <= tileX + 1; x++) {
+        if (!(tileX == x && tileY == y)) {
+          if (typeof neighbors[x] == "undefined") {
+            neighbors[x] = []
+          }
+          neighbors[x][y] = 0
         }
-        
       }
-
     }
-      console.log(test)
-
-
+    //console.log(this.getNeighbors)
+    return neighbors
   }
-  handleMouseDown(tileX,tileY) {
-    console.log(tileX,tileY)
-    // const tileX = e.target.x
-    // console.log(tileX)
-    // console.log(e.target.key)
-    //this.toggleLife(id)
-    // const rowSize = this.state.config.rowSize
-    // const firstNeighbor = id - rowSize - 1
-    // const lastNeighbor = id + rowSize + 1
 
-    // const neightbors = []
-    // for (let i = firstNeighbor; i <= lastNeighbor; i++) {
-    //   if (i < firstNeighbor + 3) {
-    //     neightbors.push(i)
-    //   } else if (i == id - 1 || i == id + 1) {
-    //     neightbors.push(i)
-    //   } else if (i > lastNeighbor - 3) {
-    //     neightbors.push(i)
-    //   }
-    // }
-    // neightbors.forEach(id => this.toggleLife(id))
+  handleMouseEnter(tileX, tileY) {
+    // console.clear()
+    //console.log(this.getNeighbors(tileX,tileY))
+    // console.log(test)
+  }
+  handleMouseDown(tileX, tileY) {
+    this.toggleLife(tileX, tileY)
   }
 
   componentDidMount() {
@@ -110,6 +106,12 @@ export default class Board extends Component {
   render() {
     const tileSize = parseInt(this.state.config.tileSize)
 
+    const arr = new Array();
+    arr.push(new this.setCoordinate(10, 0));
+    arr.push(new this.setCoordinate(20, 5));
+
+
+    console.log(arr)
     return (
       <div>
         {Object.entries(this.state.config).map(([key, value]) => (
@@ -146,7 +148,7 @@ export default class Board extends Component {
                   style={style}
                   key={tileKey}
                   onMouseDown={() => this.handleMouseDown(tileX, tileY)}
-                  onMouseEnter={() => this.handleMouseEnter(tileX,tileY)}
+                  onMouseEnter={() => this.handleMouseEnter(tileX, tileY)}
                 >
                   <b>
                     {tileX} {tileY}
