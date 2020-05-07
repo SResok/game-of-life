@@ -129,29 +129,28 @@ export default class Board extends Component {
     const boardStyle = {
       display: "grid",
       gridTemplate: `repeat(${rowSize},${tileSize}px) / repeat(${columnSize},${tileSize}px)`,
-      background:'green', 
-      padding:100
+      background: "#208caf",
+      padding: 100,
     }
 
     return (
       <div>
+        
         {/* <Toolbar
           config={this.state.config}
           setTiles={this.setTiles}
           handleInput={this.handleInput}
         /> */}
         <div className="buttons">
-          {['start', 'pause', 'stop'].map(button => {
-            
-            return <button onClick={this.buttonClick} name={button}>{button}</button>
-
+          {["start", "pause", "stop"].map(button => {
+            return (
+              <button onClick={this.buttonClick} name={button}>
+                {button}
+              </button>
+            )
           })}
         </div>
         <div id="board" style={boardStyle}>
-          
-
-
-
           {this.state.tiles.map((tile, tileX) => {
             const renderedTiles = tile.map((life, tileY) => {
               let background = life.life ? "black" : "white"
@@ -164,7 +163,7 @@ export default class Board extends Component {
               }
 
               const style = {
-                border:'1px solid black',
+                border: "1px solid black",
                 background: background,
               }
               const tileKey = `${tileX}_${tileY}`
