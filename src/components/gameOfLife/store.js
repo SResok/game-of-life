@@ -4,7 +4,7 @@ class gameStore {
   @observable tiles = []
 }
 
-const store = (window.store = new gameStore())
+const store =  new gameStore
 
 export default store
 
