@@ -8,11 +8,12 @@ export default class Board extends Component {
 
     this.state = {
       tiles: [],
+      playing: false,
       hovering: [],
       config: {
-        rowSize: 24,
+        rowSize: 18,
         columnSize: 50,
-        tileSize: 25,
+        tileSize: 30,
       },
     }
 
@@ -21,7 +22,7 @@ export default class Board extends Component {
     this.handleMouseDown = this.handleMouseDown.bind(this)
   }
 
-  generateTiles(rowSize, columnSize, tileSize) {
+  generateTiles(rowSize, columnSize) {
     const tiles = []
 
     for (let x = 0; x < rowSize; x++) {
@@ -43,6 +44,7 @@ export default class Board extends Component {
     })
   }
 
+
   handleInput(e) {
     const key = e.target.name
     const value = e.target.value
@@ -51,7 +53,6 @@ export default class Board extends Component {
       config[key] = value
       return config
     })
-    this.setTiles()
   }
 
   toggleLife(tileX, tileY) {
@@ -99,6 +100,24 @@ export default class Board extends Component {
     this.toggleLife(tileX, tileY)
   }
 
+  buttonClick(e) {
+    const event = e.target.name;
+
+    switch (event) {
+
+      case 'start': 
+        //start timer
+
+    break;
+    case 'pause':
+    break;
+    case 'stop:'://reset
+    break;
+
+    }
+  }
+  
+
   componentDidMount() {
     this.setTiles()
   }
@@ -114,15 +133,25 @@ export default class Board extends Component {
       padding:100
     }
 
-
     return (
       <div>
-        <Toolbar
+        {/* <Toolbar
           config={this.state.config}
           setTiles={this.setTiles}
           handleInput={this.handleInput}
-        />
+        /> */}
+        <div className="buttons">
+          {['start', 'pause', 'stop'].map(button => {
+            
+            return <button onClick={this.buttonClick} name={button}>{button}</button>
+
+          })}
+        </div>
         <div id="board" style={boardStyle}>
+          
+
+
+
           {this.state.tiles.map((tile, tileX) => {
             const renderedTiles = tile.map((life, tileY) => {
               let background = life.life ? "black" : "white"
