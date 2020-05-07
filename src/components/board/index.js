@@ -1,5 +1,6 @@
 import React, { Component, useState } from "react"
 import "./board.css"
+import Toolbar from "./toolbar"
 
 export default class Board extends Component {
   constructor(props) {
@@ -7,12 +8,11 @@ export default class Board extends Component {
 
     this.state = {
       tiles: [],
-      coordinates: [],
       hovering: [],
       config: {
-        rowSize: 9,
-        columnSize: 16,
-        tileSize: 80,
+        rowSize: 24,
+        columnSize: 50,
+        tileSize: 25,
       },
     }
 
@@ -51,6 +51,7 @@ export default class Board extends Component {
       config[key] = value
       return config
     })
+    this.setTiles()
   }
 
   toggleLife(tileX, tileY) {
@@ -101,43 +102,40 @@ export default class Board extends Component {
   componentDidMount() {
     this.setTiles()
   }
+
   render() {
-    const tileSize = parseInt(this.state.config.tileSize)
+    const {rowSize, columnSize,tileSize}  = this.state.config
     const currentHovering = this.state.hovering;
+    
+    const boardStyle = {
+      display: "grid",
+      gridTemplate: `repeat(${rowSize},${tileSize}px) / repeat(${columnSize},${tileSize}px)`,
+      background:'green', 
+      padding:100
+    }
+
 
     return (
       <div>
-        {Object.entries(this.state.config).map(([key, value]) => (
-          <label>
-            {key}:
-            <input
-              type="number"
-              key={key}
-              name={key}
-              id={key}
-              value={value}
-              onChange={this.handleInput}
-            />
-          </label>
-        ))}
-        <button onClick={this.setTiles}>REGEN</button>
-        <div id="board">
+        <Toolbar
+          config={this.state.config}
+          setTiles={this.setTiles}
+          handleInput={this.handleInput}
+        />
+        <div id="board" style={boardStyle}>
           {this.state.tiles.map((tile, tileX) => {
             const renderedTiles = tile.map((life, tileY) => {
               let background = life.life ? "black" : "white"
 
-              if (currentHovering[tileX] && currentHovering[tileX][tileY] == 0) {
-                
-                background = "red"
+              if (
+                currentHovering[tileX] &&
+                currentHovering[tileX][tileY] == 0
+              ) {
+                background = "rgba(255,0,0,.2)"
               }
-              
-              // const background = life.hover ? "red" : life.life ? "black" : "white"
+
               const style = {
-                position: "absolute",
-                width: tileSize,
-                height: tileSize,
-                border: "1px solid black",
-                transform: `translate3d(${tileY * 100}%,${tileX * 100}%,0)`,
+                border:'1px solid black',
                 background: background,
               }
               const tileKey = `${tileX}_${tileY}`
@@ -151,7 +149,7 @@ export default class Board extends Component {
                   onMouseDown={() => this.handleMouseDown(tileX, tileY)}
                   onMouseEnter={() => this.handleMouseEnter(tileX, tileY)}
                 >
-                
+                  {/* {tileX} {tileY} */}
                 </div>
               )
             })

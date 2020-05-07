@@ -1,7 +1,8 @@
 #board{
-	display: flex;
+	/* display: flex;
 	flex-wrap: wrap;
-	position: relative;
+	position: relative; */
+	display: grid;
 }
 
 #board .tile{
