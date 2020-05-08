@@ -19,7 +19,7 @@ function Toolbar() {
   return (
     <div>
       {Object.entries(globalState.config).map(([key, value]) => (
-        <label key={key}></label>
+        <label key={key}>
           {key}:
           <input
             type="number"
