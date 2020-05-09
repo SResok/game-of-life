@@ -1,19 +1,35 @@
-import { useReducer } from "react";
+import { useReducer } from "react"
 
 const reducer = (state, action) => {
-	switch (action.type) {
+  switch (action.type) {
     case "SET_TILES":
       return {
         ...state,
         tiles: action.payload,
       }
+    case "SET_SPEED":
+      return {
+        ...state,
+        speed: action.payload,
+      }
+    case "SET_GAMESTATE":
+      return {
+        ...state,
+        gameState: action.payload,
+      }
+    case "SET_ITERATION":
+      return {
+        ...state,
+        iteration: action.payload,
+      }
+
     case "SET_BOARD_CONFIG":
       return {
         ...state,
         config: action.payload,
       }
-	
-		case "TOGGLE_LIFE":
+
+    case "TOGGLE_LIFE":
       return {
         ...state,
         tiles: action.payload,
@@ -25,17 +41,20 @@ const reducer = (state, action) => {
 }
 
 const useGlobalState = () => {
-	const [globalState, globalDispatch] = useReducer(reducer, {
+  const [globalState, globalDispatch] = useReducer(reducer, {
+    gameState: "inactive",
     tiles: [],
-    playing: false,
+    speed: 1,
+    iteration: 0,
+
     config: {
       rowSize: 8,
       columnSize: 56,
       tileSize: 30,
-    }
+    },
   })
 
-	return {globalState,globalDispatch}
+  return { globalState, globalDispatch }
 }
 
 export default useGlobalState

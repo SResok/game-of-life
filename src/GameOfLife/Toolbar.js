@@ -1,34 +1,24 @@
 import React, { useContext } from "react"
 import Context from "./store/context"
 
+import BoardConfig from "./toolbar/BoardConfig"
+import GameButtons from "./toolbar/GameButtons"
+
 function Toolbar() {
   const { globalState, globalDispatch } = useContext(Context)
 
-  const handleInput = e => {
-    const key = e.target.name
-    const value = parseInt(e.target.value)
-    const oBoardConfig = { ...globalState.config }
+  const gameState = globalState.gameState
 
-    oBoardConfig[key] = value
-    globalDispatch({
-      type: "SET_BOARD_CONFIG",
-      payload: oBoardConfig,
-    })
-  }
+
 
   return (
     <div>
-      {Object.entries(globalState.config).map(([key, value]) => (
-        <label key={key}>
-          {key}:
-          <input
-            type="number"
-            name={key}
-            value={value}
-            onChange={handleInput}
-          />
-        </label>
-      ))}
+      <BoardConfig/>
+      <br />
+      <br />
+
+      <GameButtons/>
+      <hr />
     </div>
   )
 }
