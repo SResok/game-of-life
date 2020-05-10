@@ -34,6 +34,12 @@ const reducer = (state, action) => {
         ...state,
         tiles: action.payload,
       }
+    case "SET_TILE_PROPS": 
+      return {
+        ...state,
+        tiles: action.payload
+      }
+    
     default: {
       return state
     }
@@ -48,8 +54,8 @@ const useGlobalState = () => {
     iteration: 0,
 
     config: {
-      rowSize: 8,
-      columnSize: 56,
+      rowSize: 4,
+      columnSize: 10,
       tileSize: 30,
     },
   })

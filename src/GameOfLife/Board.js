@@ -2,7 +2,7 @@ import React, { useContext, useEffect } from "react"
 import "./board.css"
 import Toolbar from "./Toolbar"
 import Context from "./store/context"
-import Tiles from "./Tiles"
+import Tile from "./Tile"
 
 const Board = () => {
   const { globalState, globalDispatch } = useContext(Context)
@@ -12,10 +12,10 @@ const Board = () => {
     setTiles()
   }, Object.values(globalState.config))
 
-  function Tile(x, y, props) {
+  function genTile(x, y, status) {
     this.x = x
     this.y = y
-    this.props = props
+    this.status = status
   }
 
   useEffect(() => {
@@ -43,44 +43,28 @@ const Board = () => {
   }, globalState.gameState)
 
 
-  const getNeighbors = () => {
-    const aTiles = [...globalState.tiles]
-    const aliveTiles = aTiles.filter(tile => tile.props.life)
-    
-    const neighbors = aliveTiles.flatMap(aliveTile => 
-      aTiles.filter(tile => {
-        if (tile.x >= aliveTile.x - 1 && tile.x <= aliveTile.x + 1) {
-          if (tile.y >= aliveTile.y - 1 && tile.y <= aliveTile.y + 1) {
-            if (tile != aliveTile) {
-              return tile
-            }
-          }
-        }      
-      })
-    )
-    return neighbors
-  }
 
-  const getAliveNeighbors = () => {
-    // const neighbors = getNeighbors()
-    const aTiles = [...globalState.tiles]
 
-    const test = aTiles.map(tile => {
-      let sdfsdfsdfsd = 0
-        if (tile.x >= tile.x - 1 && tile.x <= tile.x + 1) {
-          if (tile.y >= tile.y - 1 && tile.y <= tile.y + 1) {
-            if (tile != tile) {
-              if (tile.props.life) {
-                sdfsdfsdfsd++
-              }
-            }
-          }
-        }  
-        console.log(sdfsdfsdfsd)
-    }
-    )
+  // const getAliveNeighbors = () => {
+  //   // const neighbors = getNeighbors()
+  //   const aTiles = [...globalState.tiles]
 
-  }
+  //   const test = aTiles.map(tile => {
+  //     let sdfsdfsdfsd = 0
+  //       if (tile.x >= tile.x - 1 && tile.x <= tile.x + 1) {
+  //         if (tile.y >= tile.y - 1 && tile.y <= tile.y + 1) {
+  //           if (tile != tile) {
+  //             if (tile.props.life) {
+  //               sdfsdfsdfsd++
+  //             }
+  //           }
+  //         }
+  //       }  
+  //       console.log(sdfsdfsdfsd)
+  //   }
+  //   )
+
+  // }
   // const testdfsfs = () => {
 
   //   const aTiles = [...globalState.tiles]
@@ -101,11 +85,7 @@ const Board = () => {
     for (let x = 0; x < rowSize; x++) {
       for (let y = 0; y < columnSize; y++) {
         tiles.push(
-          new Tile(x, y, {
-            life: 0,
-            birth: 0,
-            dieing: 0,
-          })
+          new genTile(x, y, {current:"dead",next:"dead"})
         )
       }
     }
@@ -130,7 +110,7 @@ const Board = () => {
       toggleLife(tileX, tileY)
 
 
-      getAliveNeighbors()
+      // getAliveNeighbors()
     }
   }
 
@@ -163,7 +143,10 @@ const Board = () => {
     // aTiles[tileX][tileY].life = !aTiles[tileX][tileY].life
 
     const tile = aTiles.find(tile => tile.x == tileX && tile.y == tileY);
-    tile.props.life = !tile.props.life
+    // tile.props.life = !tile.props.life
+
+    tile.status.current = tile.status.current == "alive" ? "dead" : "alive"
+    tile.status.next = tile.status.next == "alive" ? "dead" : "alive"
 
     globalDispatch({
       type: "TOGGLE_LIFE",
@@ -201,7 +184,9 @@ const Board = () => {
     <div>
       <Toolbar />
       <div id="board" style={oBoardStyle} onClick={handleBoardClick}>
-        <Tiles />
+        {globalState.tiles.map((tile,key) => {
+          return <Tile tile={tile} key={key}/>
+        })}
       </div>
     </div>
   )
