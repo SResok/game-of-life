@@ -35,6 +35,7 @@ const reducer = (state, action) => {
         tiles: action.payload,
       }
     case "SET_TILE_PROPS": 
+      console.log(action.payload)
       return {
         ...state,
         tiles: action.payload
