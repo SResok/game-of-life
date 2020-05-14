@@ -65,7 +65,9 @@ function GameButtons() {
       <label>
         Iteration(s) per second:
         <input
-          type="number"
+          type="range"
+          min="1"
+          max="30"
           value={globalState.speed}
           onChange={e => handleSpeed(e.target.value)}
         />

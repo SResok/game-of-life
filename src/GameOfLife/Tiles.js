@@ -82,7 +82,6 @@ const Tiles = () => {
     background: "#208caf",
     padding: 100,
   }
-
   return (
     <div id="tileGrid" style={oTileGridStyle}>
       {globalState.tiles.map((tile, tileIndex) => {
@@ -95,7 +94,7 @@ const Tiles = () => {
             tileindex={tileIndex}
             key={tileIndex}
             style={{
-               border: "1px solid purple",
+              border: "1px solid black",
               background: tileColor,
             }}
           ></div>
