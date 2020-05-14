@@ -12,10 +12,15 @@ const reducer = (state, action) => {
         ...state,
         speed: action.payload,
       }
-    case "SET_GAMESTATE":
+    case "SET_ISACTIVE":
       return {
         ...state,
-        gameState: action.payload,
+        isActive: action.payload,
+      }
+    case "SET_SECONDS":
+      return {
+        ...state,
+        seconds: action.payload,
       }
     case "SET_ITERATION":
       return {
@@ -34,13 +39,12 @@ const reducer = (state, action) => {
         ...state,
         tiles: action.payload,
       }
-    case "SET_TILE_PROPS": 
-      console.log(action.payload)
+    case "SET_TILE_PROPS":
       return {
         ...state,
-        tiles: action.payload
+        tiles: action.payload,
       }
-    
+
     default: {
       return state
     }
@@ -49,14 +53,17 @@ const reducer = (state, action) => {
 
 const useGlobalState = () => {
   const [globalState, globalDispatch] = useReducer(reducer, {
-    gameState: "inactive",
+    isActive: false,
     tiles: [],
-    speed: 1,
+    speed: 10,
+    seconds: 0,
     iteration: 0,
 
+
+
     config: {
-      rowSize: 4,
-      columnSize: 10,
+      rowSize: 14,
+      columnSize: 33,
       tileSize: 30,
     },
   })

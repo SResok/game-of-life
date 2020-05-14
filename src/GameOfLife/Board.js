@@ -5,36 +5,18 @@ import Tiles from "./Tiles"
 
 const Board = () => {
   const { globalState, globalDispatch } = useContext(Context)
-  const { rowSize, columnSize, tileSize } = globalState.config
+  const { rowSize, columnSize } = globalState.config
 
   useEffect(() => {
     setTiles()
   }, Object.values(globalState.config))
 
-  useEffect(() => {
-    switch (globalState.gameState) {
-      case "inactive":
-        console.log("inactive")
-        break
-      case "active":
-        console.log("start")
-        break
-      case "paused":
-        console.log("paused")
-        break
-      case "stop":
-        console.log("stop")
-        break
-      default:
-        console.log("idle")
-    }
-  }, globalState.gameState)
-
   const generateTiles = () => {
     const tiles = []
     for (let x = 0; x < rowSize; x++) {
       for (let y = 0; y < columnSize; y++) {
-        tiles.push({ x: x, y: y, status: { current: "dead", next: "dead" } })
+        const life = Math.floor(Math.random() * 2) ? true : false
+        tiles.push({ x: x, y: y, life })
       }
     }
     return tiles

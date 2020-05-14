@@ -1,28 +1,25 @@
 import React, { useContext, useEffect } from "react"
 import Context from "./store/context"
 
-const Tiles = props => {
+const Tiles = () => {
   const { globalState, globalDispatch } = useContext(Context)
+  const { isActive, seconds } = globalState
   const { rowSize, columnSize, tileSize } = globalState.config
 
-  // const tile = props.tile
-  // const tileIndex = props.tileIndex
-
   useEffect(() => {
-    if (globalState.iteration > 0) {
+    if (isActive) {
       setNextIteration()
     }
-  }, [globalState.iteration])
+  }, [isActive, seconds])
+
+
 
   const toggleLife = (tile, tileIndex) => {
     const aTiles = [...globalState.tiles]
     const targetTile = { ...aTiles[tileIndex] }
-    const targetTileStatus = { ...targetTile.status }
 
-    targetTileStatus.current = tile.status.current == "alive" ? "dead" : "alive"
-    targetTileStatus.next = tile.status.next == "alive" ? "dead" : "alive"
+    targetTile.life = !tile.life
 
-    targetTile.status = targetTileStatus
     aTiles[tileIndex] = targetTile
 
     globalDispatch({
@@ -36,7 +33,7 @@ const Tiles = props => {
       if (neighbor.x >= tile.x - 1 && neighbor.x <= tile.x + 1) {
         if (neighbor.y >= tile.y - 1 && neighbor.y <= tile.y + 1) {
           if (neighbor != tile) {
-            if (neighbor.status.current == "alive") {
+            if (neighbor.life) {
               return neighbor
             }
           }
@@ -47,35 +44,35 @@ const Tiles = props => {
   }
 
   const setNextIteration = () => {
-    const aTiles = [...globalState.tiles]
 
-    aTiles.map((tile, tileIndex) => {
-      const neighborCount = getNeighborCount(tile, aTiles)
+    const aTiles = []
+    const globalTiles = globalState.tiles
 
-      const targetTile = { ...aTiles[tileIndex] }
-      const targetTileStatus = { ...targetTile.status }
-
-
-      if (tile.status.next == "birth") targetTileStatus.current = "alive" && targetTileStatus.next == "alive"
-      if (tile.status.next == "dieing") targetTileStatus.current = "dead" && targetTileStatus.next == "dead"
+    globalTiles.map(tile => {
+      const neighborCount = getNeighborCount(tile, globalTiles)
+      const newTile = { ...tile }
 
       if (neighborCount >= 2 && neighborCount <= 3) {
-        if (tile.status.current == "dead" && neighborCount === 3) {
-          targetTileStatus.next = "birth"
+        if (tile.life) newTile.life = true
+        if (!tile.life && neighborCount === 3) {
+          newTile.life = true
         }
       } else {
-        if (tile.status.current == "alive") {
-          targetTileStatus.next = "dieing"
+        if (tile.life) {
+          newTile.life = false
         }
       }
 
-      targetTile.status = targetTileStatus
-      aTiles[tileIndex] = targetTile
+      aTiles.push(newTile)
     })
 
     globalDispatch({
       type: "SET_TILE_PROPS",
       payload: aTiles,
+    })
+    globalDispatch({
+      type: "SET_ITERATION",
+      payload: globalState.iteration + 1,
     })
   }
 
@@ -89,14 +86,7 @@ const Tiles = props => {
   return (
     <div id="tileGrid" style={oTileGridStyle}>
       {globalState.tiles.map((tile, tileIndex) => {
-        const tileColor =
-          tile.status.next == "alive"
-            ? "cyan"
-            : tile.status.next == "birth"
-            ? "orange"
-            : tile.status.next == "dieing"
-            ? "red"
-            : "white"
+        const tileColor = tile.life ? "purple" : "black"
 
         return (
           <div
@@ -105,7 +95,7 @@ const Tiles = props => {
             tileindex={tileIndex}
             key={tileIndex}
             style={{
-              border: "1px solid black",
+               border: "1px solid purple",
               background: tileColor,
             }}
           ></div>

@@ -7,10 +7,6 @@ import GameButtons from "./toolbar/GameButtons"
 function Toolbar() {
   const { globalState, globalDispatch } = useContext(Context)
 
-  const gameState = globalState.gameState
-
-
-
   return (
     <div>
       <BoardConfig/>
