@@ -52,6 +52,12 @@ const reducer = (state, action) => {
 }
 
 const useGlobalState = () => {
+  const tileSize = 30
+  const rows = Math.floor(((window.innerHeight / 100) * 50) / tileSize) 
+  const cols = Math.floor(((window.innerWidth / 100) * 75) / tileSize)
+  
+
+
   const [globalState, globalDispatch] = useReducer(reducer, {
     isActive: false,
     tiles: [],
@@ -62,9 +68,9 @@ const useGlobalState = () => {
 
 
     config: {
-      rowSize: 14,
-      columnSize: 33,
-      tileSize: 30,
+      rowSize: rows,
+      columnSize: cols,
+      tileSize: tileSize,
     },
   })
 
