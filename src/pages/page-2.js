@@ -16,11 +16,11 @@ const SecondPage = props => {
 
   let  windowWidth = 400, windowHeight = 400, pixelRatio = 1 
   
-  if (typeof (window) != undefined) {
+  useEffect(() => {
     windowWidth = Math.floor((window.innerWidth / 100) * 85)
     windowHeight = Math.floor((window.innerHeight / 100) * 65)
     pixelRatio = window.devicePixelRatio
-  }
+  }, [])
 
   const [tileSize,setTileSize] = useState(20)
 
