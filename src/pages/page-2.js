@@ -14,18 +14,12 @@ const SecondPage = props => {
   const [overcrowd, setOvercrowd] = useState(4)
   const [undercrowd, setUndercrowd] = useState(1)
 
-
-
-  let windowWidth, windowHeight, pixelRatio
-  if (window) {
-    windowWidth = Math.floor((window.innerWidth / 100) * 85)
-    windowHeight = Math.floor((window.innerHeight / 100) * 65)
+  const {
+    windowWidth = Math.floor((window.innerWidth / 100) * 85),
+    windowHeight = Math.floor((window.innerHeight / 100) * 65),
     pixelRatio = window.devicePixelRatio
-  } else {
-    windowWidth = 400
-    windowHeight = 400
-    pixelRatio = 1
   }
+
   const [tileSize,setTileSize] = useState(20)
 
   const width = windowWidth - (windowWidth % tileSize)
