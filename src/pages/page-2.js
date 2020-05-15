@@ -14,10 +14,11 @@ const SecondPage = props => {
   const [overcrowd, setOvercrowd] = useState(4)
   const [undercrowd, setUndercrowd] = useState(1)
 
-  let {windowWidth = 400,windowHeight=400,pixelRatio = 1}
+  let  windowWidth = 400, windowHeight = 400, pixelRatio = 1 
+  
   if (typeof (window) != undefined) {
-    windowWidth = Math.floor((window.innerWidth / 100) * 85),
-    windowHeight = Math.floor((window.innerHeight / 100) * 65),
+    windowWidth = Math.floor((window.innerWidth / 100) * 85)
+    windowHeight = Math.floor((window.innerHeight / 100) * 65)
     pixelRatio = window.devicePixelRatio
   }
 
