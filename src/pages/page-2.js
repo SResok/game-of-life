@@ -10,34 +10,48 @@ const SecondPage = props => {
   const [isActive, setIsActive] = useState(false)
   const [globalTiles, setGlobalTiles] = useState([])
 
-  const [birth,setBirth] = useState(3)
+  const [loaded, setLoaded] = useState(0)
+
+  const [birth, setBirth] = useState(3)
   const [overcrowd, setOvercrowd] = useState(4)
   const [undercrowd, setUndercrowd] = useState(1)
 
-  let  windowWidth = 400, windowHeight = 400, pixelRatio = 1 
-  
+  const [tileSize, setTileSize] = useState(20)
+
+  const [width, setWidth] = useState(0)
+  const [height, setHeight] = useState(0)
+
   useEffect(() => {
-    windowWidth = Math.floor((window.innerWidth / 100) * 85)
-    windowHeight = Math.floor((window.innerHeight / 100) * 65)
-    pixelRatio = window.devicePixelRatio
+    if (loaded) {
+      genTiles()
+    }
+    
+  }, [loaded,tileSize])
+
+
+  useEffect(() => {
+    const windowWidth = Math.floor(window.innerWidth)
+    setWidth(windowWidth - (windowWidth % tileSize))
+
+    const windowHeight = Math.floor((window.innerHeight / 100) * 50)
+    setHeight(windowHeight - (windowHeight % tileSize))
+
+    setLoaded(1)
   }, [])
 
-  const [tileSize,setTileSize] = useState(20)
-
-  const width = windowWidth - (windowWidth % tileSize)
-  const height = windowHeight - (windowHeight % tileSize)
+  useEffect(() => {
+    if (loaded) {
+      genTiles()
+    }
+  }, [loaded])
 
   const canvas = useRef(null)
-  useEffect(() => {
-    genTiles()
-  }, [])
 
   useEffect(() => {
-    if (globalTiles.length) {
+    if (globalTiles.length && loaded) {
       const context = canvas.current.getContext("2d")
 
       context.save()
-      context.scale(pixelRatio, pixelRatio)
       context.fillStyle = "hsl(0, 0%, 95%)"
 
       context.fillRect(0, 0, width, height)
@@ -55,27 +69,25 @@ const SecondPage = props => {
 
       context.restore()
     }
-  },[globalTiles])
+  }, [globalTiles,loaded])
 
   useEffect(() => {
     let interval = null
     if (isActive) {
       interval = setInterval(() => {
         setSeconds(seconds => seconds + 1)
-      }, 1000/speed)
+      }, 1000 / speed)
     } else if (!isActive && seconds !== 0) {
       clearInterval(interval)
     }
     return () => clearInterval(interval)
   }, [isActive, seconds])
 
-    useEffect(() => {
-      if (isActive) {
-        setNextTiles()
-      } 
-    }, [isActive, seconds])
-
-
+  useEffect(() => {
+    if (isActive) {
+      setNextTiles()
+    }
+  }, [isActive, seconds])
 
   const genTiles = () => {
     const tiles = []
@@ -89,8 +101,10 @@ const SecondPage = props => {
     setGlobalTiles(tiles)
   }
 
-  const setNextTiles = () => {
 
+
+  
+  const setNextTiles = () => {
     let newTiles = []
 
     globalTiles.forEach((tile, tileX) => {
@@ -100,20 +114,27 @@ const SecondPage = props => {
 
         let neighbors = 0
 
-        for (let i = tileX - tileSize; i <= tileX + tileSize; i = i + tileSize){
-          for (let j = tileY - tileSize; j <= tileY + tileSize; j = j + tileSize){
+        for (
+          let i = tileX - tileSize;
+          i <= tileX + tileSize;
+          i = i + tileSize
+        ) {
+          for (
+            let j = tileY - tileSize;
+            j <= tileY + tileSize;
+            j = j + tileSize
+          ) {
             if (i >= 0 && i < height) {
               if (j >= 0 && j < width) {
-                if(globalTiles[i][j]) neighbors++
+                if (globalTiles[i][j]) neighbors++
               }
             }
           }
         }
-        neighbors -= life;
+        neighbors -= life
 
-        
         if (neighbors > undercrowd && neighbors < overcrowd) {
-          if(life) newTiles[tileX][tileY] = 1
+          if (life) newTiles[tileX][tileY] = 1
           if (!life && neighbors == birth) {
             newTiles[tileX][tileY] = 1
           }
@@ -122,17 +143,11 @@ const SecondPage = props => {
             newTiles[tileX][tileY] = 0
           }
         }
-        
       })
     })
 
     setGlobalTiles(newTiles)
   }
-
-
-  const dw = Math.floor(pixelRatio * width)
-  const dh = Math.floor(pixelRatio * height)
-  const style = { width, height }
 
   function toggle() {
     setIsActive(!isActive)
@@ -144,22 +159,30 @@ const SecondPage = props => {
     genTiles()
   }
 
+  const handleClick = (e) => {
+    const clickX = e.pageX
+    const clickY = e.pageY
+
+    console.log(clickX,clickY)
+  }
+
   return (
     <Layout>
       <SEO title="Page two" />
       <h1>ITERATION - {seconds}</h1>
       <div className="app">
-        {/* <label>
-          tileSize:{" "}
+        <label>
+          tileSize({tileSize}):{" "}
           <input
-            type="number"
+            type="range"
             value={tileSize}
+            min={10}
+            max={30}
             onChange={e => {
-              setTileSize(e.target.value)
-              genTiles()
+              setTileSize(parseInt(e.target.value))
             }}
           />
-        </label> */}
+        </label>
         <div className="row">
           <button
             className={`button button-primary button-primary-${
@@ -172,6 +195,8 @@ const SecondPage = props => {
           <button className="button" onClick={reset}>
             Reset
           </button>
+          <label>
+            Speed({speed}):
           <input
             type="range"
             value={speed}
@@ -179,6 +204,7 @@ const SecondPage = props => {
             max="20"
             onChange={e => setSpeed(e.target.value)}
           />
+          </label>
           <br />
           <label>
             undercrowd:{" "}
@@ -206,7 +232,16 @@ const SecondPage = props => {
           </label>
         </div>
       </div>
-      <canvas ref={canvas} width={dw} height={dh} style={style} />
+      <div className="test">
+        
+      <canvas
+        onClick={handleClick}
+        ref={canvas}
+        width={width}
+        height={height}
+        style={{ width, height }}
+      />
+            </div>
     </Layout>
   )
 }
