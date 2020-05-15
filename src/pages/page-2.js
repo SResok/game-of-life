@@ -5,8 +5,15 @@ import Layout from "../components/layout"
 import SEO from "../components/seo"
 
 const SecondPage = props => {
-  let windowWidth = Math.floor(window.innerWidth / 100 * 85)
-  let windowHeight = Math.floor((window.innerHeight / 100) * 65)
+  let windowWidth, windowHeight;
+  if (window) {
+    windowWidth = Math.floor(window.innerWidth / 100 * 85)
+    windowHeight = Math.floor((window.innerHeight / 100) * 65)
+  }
+  else {
+    windowWidth = 400
+    windowHeight = 400
+  }
   const tileSize = 20
 
   windowWidth = windowWidth - (windowWidth % tileSize)
